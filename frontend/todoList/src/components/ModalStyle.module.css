@@ -1,0 +1,95 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.content {
+    background: #2a2a2a;
+    padding: 30px;
+    border-radius: 8px;
+    width: 450px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    color: #f0f0f0;
+}
+
+.content p {
+    color: #cccccc;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    color: #f0f0f0;
+    font-size: 1rem;
+}
+
+.form input {
+    padding: 10px;
+    border: 1px solid #444444;
+    border-radius: 5px;
+    background-color: #383838;
+    color: #f0f0f0;
+    font-size: 1rem;
+}
+
+.form input::placeholder {
+    color: #999999;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.button button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    min-width: 120px;
+}
+
+.button button:first-child {
+    background: #660000;
+    color: white;
+}
+
+.button button:first-child:hover {
+    background: #880000;
+    transform: translateY(-2px);
+}
+
+.button button:last-child {
+    background: #228b22;
+    color: white;
+}
+
+.button button:last-child:hover {
+    background: #2eba2e;
+    transform: translateY(-2px);
+}

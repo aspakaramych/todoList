@@ -25,6 +25,7 @@ function App() {
             completed: false,
         }
         setModal(false)
+        setTextTask("")
         setTasks([...tasks, newTask])
     }
 
