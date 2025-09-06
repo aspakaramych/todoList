@@ -43,6 +43,10 @@
     outline: 4px auto -webkit-focus-ring-color;
 }
 
+.button:active {
+    color: green;
+}
+
 .footer {
     width: 100%;
     gap: 20px;

@@ -75,11 +75,6 @@ function App() {
         console.log("importHook")
     }
 
-    const exportHook = () => {
-        setIsImportExportOpen(false)
-        console.log("exportHook")
-    }
-
     const handleClickOutside = () => {
         setIsImportExportOpen(false)
     }
@@ -107,9 +102,36 @@ function App() {
         setTasks(tasks.filter(task => task.id !== id))
     }
 
+    const doneHandle = (id: string) => {
+        setTasks(prevTasks =>
+            prevTasks.map(task =>
+                task.id === id
+                    ? { ...task, completed: !task.completed }
+                    : task
+            )
+        );
+    }
+
+    const exportHandle = () => {
+        setIsImportExportOpen(false)
+        const json = JSON.stringify(tasks, null, 2)
+        const blob = new Blob([json], { type: "application/json" })
+        const url = URL.createObjectURL(blob)
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "tasks.json"
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url)
+    }
+
     return (
         <>
-            <ImportExportMenu isOpen={isImportExportOpen} importHook={importHook} exportHook={exportHook}/>
+            <ImportExportMenu isOpen={isImportExportOpen} importHook={importHook} exportHook={exportHandle}/>
 
             <Modal isOpen={modal} onClose={() => setModal(false)} onConfirm={createTask} message={
                 <label>
@@ -125,7 +147,7 @@ function App() {
             }/>
             <div onClick={handleClickOutside} className="card-list">
                 {tasks.map((task) => (
-                    <Card key={task.id} text={task.text} editHook={() => editHandle(task.id)} deleteHook={() => deleteHandle(task.id)}/>
+                    <Card key={task.id} text={task.text} completed={() => doneHandle(task.id)} editHook={() => editHandle(task.id)} deleteHook={() => deleteHandle(task.id)}/>
                 ))}
                 <EmptyCard newCard={newCard}/>
             </div>
