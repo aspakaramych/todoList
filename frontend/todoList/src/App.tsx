@@ -1,7 +1,7 @@
 import './App.css'
 import Card from "./components/Card.tsx";
 import EmptyCard from "./components/EmptyCard.tsx";
-import {useState, useRef, useEffect} from "react";
+import {useState, useRef, useEffect, useCallback} from "react";
 import ImportExportMenu from "./components/ImportExportMenu.tsx";
 import Modal from "./components/Modal.tsx";
 import {Guid} from "js-guid";
@@ -70,11 +70,6 @@ function App() {
         setIsImportExportOpen(true)
     }
 
-    const importHook = () => {
-        setIsImportExportOpen(false);
-        console.log("importHook")
-    }
-
     const handleClickOutside = () => {
         setIsImportExportOpen(false)
     }
@@ -129,10 +124,47 @@ function App() {
         URL.revokeObjectURL(url)
     }
 
+    const importHandle = useCallback(() => {
+        setIsImportExportOpen(false)
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+
+        const handleChange = (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            const file = target.files?.[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const result = e.target?.result;
+                    if (typeof result !== 'string') {
+                        throw new Error('Неверный формат файла');
+                    }
+
+                    const json: TaskObject[] = JSON.parse(result);
+                    setTasks(json);
+                    console.log('Импортированный JSON:', json);
+                } catch (error) {
+                    alert('Неверный формат JSON файла');
+                }
+            };
+
+            reader.onerror = () => {
+                alert('Ошибка чтения файла');
+            };
+
+            reader.readAsText(file);
+        };
+
+        input.addEventListener('change', handleChange, { once: true });
+        input.click();
+    }, [setTextTask])
+
     return (
         <>
-            <ImportExportMenu isOpen={isImportExportOpen} importHook={importHook} exportHook={exportHandle}/>
-
+            <ImportExportMenu isOpen={isImportExportOpen} importHook={importHandle} exportHook={exportHandle}/>
             <Modal isOpen={modal} onClose={() => setModal(false)} onConfirm={createTask} message={
                 <label>
                     Текст задачи
@@ -147,15 +179,11 @@ function App() {
             }/>
             <div onClick={handleClickOutside} className="card-list">
                 {tasks.map((task) => (
-                    <Card key={task.id} text={task.text} completed={() => doneHandle(task.id)} editHook={() => editHandle(task.id)} deleteHook={() => deleteHandle(task.id)}/>
+                    <Card key={task.id} text={task.text} complete={task.completed} completed={() => doneHandle(task.id)} editHook={() => editHandle(task.id)} deleteHook={() => deleteHandle(task.id)}/>
                 ))}
                 <EmptyCard newCard={newCard}/>
             </div>
-
-
             <button className={"floating-button"} onClick={handleImportExportClick} ref={menuButtonRef}><IconUpload /></button>
-
-
         </>
     )
 }
