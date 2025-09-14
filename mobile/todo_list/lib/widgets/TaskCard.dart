@@ -1,57 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/screens/NodeEditorScreen.dart';
 
-class TaskCard extends StatefulWidget {
+class TaskCard extends StatelessWidget {
   final String text;
-  const TaskCard({super.key, required this.text});
+  final bool isComplete;
+  final bool isSelected;
+  final VoidCallback onToggleComplete;
+  final VoidCallback onTap;
+  final VoidCallback onLongPress;
+
+  const TaskCard({
+    super.key,
+    required this.text,
+    required this.isComplete,
+    this.isSelected = false,
+    required this.onToggleComplete,
+    required this.onTap,
+    required this.onLongPress,
+  });
 
   @override
-  State<TaskCard> createState() => _TaskCardState();
-}
-
-class _TaskCardState extends State<TaskCard> {
-  String _text = "";
-  bool _complete = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _text = widget.text;
-  }
-
-  void _navigateToEditScreen() async {
-    final result = await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => NodeEditorScreen(text: _text)));
-    if (result != null){
-      setState(() {
-        _text = result;
-      });
-    }
-  }
-
-  void _toggleComplete() {
-    setState(() {
-      _complete = !_complete;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context){
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ListTile(
-        title: Text(
-          _text,
-          style: TextStyle(
-            decoration: _complete ? TextDecoration.lineThrough : null,
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPress: onLongPress,
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        color: isSelected ? Colors.blue.withOpacity(0.3) : null,
+        child: ListTile(
+          leading: isSelected
+              ? Checkbox(
+            value: isSelected,
+            onChanged: (bool? newVal) {
+              onTap();
+            },
+          )
+              : null,
+          title: Text(
+            text,
+            style: TextStyle(
+              decoration: isComplete ? TextDecoration.lineThrough : null,
+              decorationColor: Colors.black,
+              decorationThickness: 2.0,
+            ),
+          ),
+          trailing: Checkbox(
+            value: isComplete,
+            onChanged: (bool? newVal) {
+              onToggleComplete();
+            },
           ),
         ),
-        trailing: Checkbox(value: _complete, onChanged: (bool? newVal){
-          _toggleComplete();
-        }),
-        onTap: _navigateToEditScreen,
       ),
     );
   }
